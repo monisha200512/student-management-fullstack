@@ -66,7 +66,6 @@ function AddCourse({ onCourseAdded }) {
     boxSizing: 'border-box'
   };
 
-  const fullWidthInputStyles = {
     width: '100%',
     padding: '14px 18px',
     border: '2px solid rgba(0, 0, 0, 0.1)',
