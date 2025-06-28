@@ -1,0 +1,54 @@
+version: '3.3'
+
+services:
+  # MySQL Database (internal only)
+  database:
+    image: mysql:8.0
+    container_name: student-management-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: studentdb
+      MYSQL_USER: student
+      MYSQL_PASSWORD: password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - student-network
+
+  # Spring Boot Backend
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: student-management-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/studentdb
+      SPRING_DATASOURCE_USERNAME: student
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "8085:8085"
+    depends_on:
+      - database
+    networks:
+      - student-network
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: student-management-frontend
+    ports:
+      - "4000:80"
+    depends_on:
+      - backend
+    networks:
+      - student-network
+
+volumes:
+  mysql_data:
+
+networks:
+  student-network:
+    driver: bridge
