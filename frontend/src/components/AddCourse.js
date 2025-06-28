@@ -66,17 +66,6 @@ function AddCourse({ onCourseAdded }) {
     boxSizing: 'border-box'
   };
 
-    width: '100%',
-    padding: '14px 18px',
-    border: '2px solid rgba(0, 0, 0, 0.1)',
-    borderRadius: '10px',
-    fontSize: '16px',
-    marginBottom: '15px',
-    background: '#ffffff',
-    color: '#2d3748',
-    boxSizing: 'border-box'
-  };
-
   const buttonStyles = {
     background: 'linear-gradient(45deg, #48bb78, #38a169)',
     border: 'none',
