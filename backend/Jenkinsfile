@@ -15,8 +15,7 @@ pipeline {
         stage('Build Backend') {
             steps {
                 dir('backend') {
-                    sh 'chmod +x mvnw'
-                    sh './mvnw clean compile'
+                    sh 'mvn clean compile'
                 }
             }
         }
@@ -24,7 +23,7 @@ pipeline {
         stage('Test Backend') {
             steps {
                 dir('backend') {
-                    sh './mvnw test'
+                    sh 'mvn test'
                 }
             }
         }
@@ -32,7 +31,7 @@ pipeline {
         stage('Package Backend') {
             steps {
                 dir('backend') {
-                    sh './mvnw package -DskipTests'
+                    sh 'mvn package -DskipTests'
                 }
             }
         }
@@ -46,30 +45,10 @@ pipeline {
             }
         }
         
-        stage('Docker Build') {
-            parallel {
-                stage('Build Backend Image') {
-                    steps {
-                        dir('backend') {
-                            sh 'docker build -t student-management-backend:latest .'
-                        }
-                    }
-                }
-                stage('Build Frontend Image') {
-                    steps {
-                        dir('frontend') {
-                            sh 'docker build -t student-management-frontend:latest .'
-                        }
-                    }
-                }
-            }
-        }
-        
-        stage('Deploy') {
+        stage('Docker Build & Deploy') {
             steps {
-                sh 'docker-compose down || true'
                 sh 'docker-compose up --build -d'
-                sh 'sleep 30'  // Wait for containers to start
+                sh 'sleep 30'
                 sh 'docker-compose ps'
             }
         }
@@ -77,10 +56,8 @@ pipeline {
         stage('Health Check') {
             steps {
                 script {
-                    // Check if backend is healthy
-                    sh 'curl -f http://localhost:9090/actuator/health || echo "Backend health check failed"'
-                    // Check if frontend is accessible
-                    sh 'curl -f http://localhost:5000 || echo "Frontend health check failed"'
+                    sh 'curl -f http://localhost:5000 || echo "Frontend check failed"'
+                    sh 'curl -f http://localhost:9090 || echo "Backend check failed"'
                 }
             }
         }
@@ -89,14 +66,13 @@ pipeline {
     post {
         always {
             echo 'Pipeline completed!'
-            sh 'docker-compose logs --tail=50'
         }
         success {
-            echo 'Pipeline succeeded! 🎉 Application deployed successfully!'
+            echo 'Pipeline succeeded! 🎉'
         }
         failure {
-            echo 'Pipeline failed! ❌ Check the logs above.'
-            sh 'docker-compose down'
+            echo 'Pipeline failed! ❌'
+            sh 'docker-compose down || true'
         }
     }
 }
