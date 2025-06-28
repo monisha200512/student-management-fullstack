@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/target/
+
+# Build outputs
+build/
+dist/
+
+# Environment files
+.env
+.env.local
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+cat > .gitignore << 'EOF'
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/target/
+
+# Build outputs
+build/
+dist/
+
+# Environment files
+.env
+.env.local
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
